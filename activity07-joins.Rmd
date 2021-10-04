@@ -1,6 +1,6 @@
 ---
 title: "Activity 7"
-author: "Name"
+author: "Moeen Farasat"
 output: github_document
 ---
 
@@ -13,6 +13,10 @@ knitr::opts_chunk$set(error = TRUE)
 Load the entirety of the `{tidyverse}`.
 Be sure to avoid printing out any unnecessary information and give the code chunk a meaningful name.
 
+
+```{r}
+library(tidyverse)
+```
 
 
 In this activity we will explore joining information that is contained in multiple data files.
@@ -32,6 +36,15 @@ Assign each file to a meaningful object name (e.g., `dennys`,`laquinta`, and `st
 Give your code chunk a meaningful name.
 
 
+```{r}
+dennys <- read_csv(here::here("data", "dennys.csv"))
+laquinta <- read_csv(here::here("data", "laquinta.csv"))
+states <- read_csv(here::here("data", "states.csv"))
+
+head(dennys)
+head(laquinta)
+head(states)
+```
 
 
 ### Provide more information
@@ -48,6 +61,8 @@ Below is a brief summary of the information that each function provides.
 Use the output from `str` of these datasets to complete the `Type` column in the partially started data dictionary tables below.
 
 ```{r data_info}
+
+
 str(dennys)
 str(laquinta)
 str(states)
@@ -95,14 +110,14 @@ Look at the websites that the data come from (linked above).
 Are there any La Quinta’s locations outside of the US?
 What about Denny’s?
 
-**Response**:
+**There La Quinta's outside of the US in Canada, Mexico, Honduras, Colombia, Turkey, and Chile. There are no Denny's outside the US**:
 
 
 If we wanted to do this using the datasets, would we need to ?
 Don’t worry about implementing this yet, you only need to brainstorm some ideas.
 Include at least one idea as your answer, but you are welcome to write down a few options too.
 
-**Response**:
+**We could use the filter function for the names variable in the states data**:
 
 
 ### Preparing to Join
@@ -114,16 +129,29 @@ To do so, *filter* the Denny’s locations for observations where state is *not 
 Do not assign this to anything; we only want to see if we need to be aware of non-US cases.
 If there are any non-US locations, specify where these are.
 
+```{r}
+dennys%>%
+  filter(!(state %in% states$abbreviation))
+
+
+```
 
 
 
-**Response**:
+**there are no Dennys outside of the US because there are no results**:
 
 
 Now do this again, but using `anti_join`.
 To do so, take the Denny's locations and anti-join this with the states dataset.
 Remember to specify your `by` columns.
 
+```{r}
+dennys%>%
+  ##rename(abbreviation = state) %>% 
+  ##anti_join(states, by = "abbreviation")
+  anti_join(states, by = c("state"="abbreviation"))
+  
+```
 
 
 #### Brief Aside
