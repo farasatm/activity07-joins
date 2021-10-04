@@ -375,6 +375,33 @@ questions, contact your instructor. Otherwise feel free to continue on.
 
 Determine if La Quinta has any locations that are outside of the US.
 
+``` r
+laquinta %>% 
+  mutate(
+    country = case_when(state %in% states$abbreviation ~ "United States",
+                        TRUE ~ "Other")
+    ) %>% 
+  filter(country == "Other")
+```
+
+    ## # A tibble: 14 x 7
+    ##    address                city            state zip   longitude latitude country
+    ##    <chr>                  <chr>           <chr> <chr>     <dbl>    <dbl> <chr>  
+    ##  1 Carretera Panamerican… "\nAguascalien… AG    20345    -102.     21.8  Other  
+    ##  2 Av. Tulum Mza. 14 S.M… "\nCancun"      QR    77500     -86.8    21.2  Other  
+    ##  3 Ejercito Nacional 8211 "Col\nPartido … CH    32528    -106.     31.7  Other  
+    ##  4 Blvd. Aeropuerto 4001  "Parque Indust… NL    66600    -100.     25.8  Other  
+    ##  5 Carrera 38 # 26-13 Av… "\nMedellin Co… ANT   0500…     -75.6     6.22 Other  
+    ##  6 AV. PINO SUAREZ No. 1… "Col. Centro\n… NL    64000    -100.     25.7  Other  
+    ##  7 Av. Fidel Velazquez #… "\nMonterrey"   NL    64190    -100.     25.7  Other  
+    ##  8 63 King Street East    "\nOshawa"      ON    L1H1…     -78.9    43.9  Other  
+    ##  9 Calle Las Torres-1 Co… "\nPoza Rica"   VE    93210     -97.4    20.6  Other  
+    ## 10 Blvd. Audi N. 3 Ciuda… "\nSan Jose Ch… PU    75010     -97.8    19.2  Other  
+    ## 11 Ave. Zeta del Cochero… "Col. ReservaT… PU    72810     -98.2    19.0  Other  
+    ## 12 Av. Benito Juarez 123… "\nSan Luis Po… SL    78399    -101.     22.1  Other  
+    ## 13 Blvd. Fuerza Armadas   "contiguo Mall… FM    11101     -87.2    14.1  Other  
+    ## 14 8640 Alexandra Rd      "\nRichmond"    BC    V6X1…    -123.     49.2  Other
+
 #### Isolating US locations
 
 For the rest of this activity, we will work with the data from the
@@ -383,21 +410,77 @@ we do not need to worry about updating this object, but you do need to
 do some work on the `laquinta` data. Create a new object called
 `laquinta_us` that only contains the locations inside the US.
 
+``` r
+laquinta_us <- laquinta %>% 
+  mutate(
+    country = case_when(state %in% states$abbreviation ~ "United States",
+                        TRUE ~ "Other")
+    ) %>% 
+  filter(country != "Other")
+```
+
 ### Fewest locations
 
 Let’s test some of our data summary skills.
 
 Which US state(s) has/ve the fewest Denny’s location?
 
-**Response**:
+``` r
+dennystotal<-dennys %>% 
+  group_by(state) %>% 
+  summarise(n=n())%>% 
+  arrange(n)
+dennystotal
+```
+
+    ## # A tibble: 51 x 2
+    ##    state     n
+    ##    <chr> <int>
+    ##  1 DE        1
+    ##  2 DC        2
+    ##  3 VT        2
+    ##  4 AK        3
+    ##  5 IA        3
+    ##  6 NH        3
+    ##  7 SD        3
+    ##  8 WV        3
+    ##  9 LA        4
+    ## 10 MT        4
+    ## # … with 41 more rows
+
+**Deleware has the lowest number of Denny’s. **:
 
 Which US state(s) has/ve the fewest La Quinta locations?
 
-**Response**:
+``` r
+laquinta_us_total<-laquinta_us %>% 
+  group_by(state) %>% 
+  summarise(n=n())%>% 
+  arrange(n)
+laquinta_us_total
+```
+
+    ## # A tibble: 48 x 2
+    ##    state     n
+    ##    <chr> <int>
+    ##  1 ME        1
+    ##  2 AK        2
+    ##  3 NH        2
+    ##  4 RI        2
+    ##  5 SD        2
+    ##  6 VT        2
+    ##  7 WV        3
+    ##  8 WY        3
+    ##  9 IA        4
+    ## 10 MI        4
+    ## # … with 38 more rows
+
+**Maine has the lowest. **:
 
 Is this surprising to you? Why or why not?
 
-**Response**:
+**This is a little strange because you would assume states with the
+fewest would be the same**:
 
 ### Locations per thousand square miles
 
@@ -468,8 +551,6 @@ pre_join_dennys <- dennys %>%
 pre_join_laquinta_us <- laquinta_us %>% 
   mutate(establishment = "La Quinta")
 ```
-
-    ## Error in mutate(., establishment = "La Quinta"): object 'laquinta_us' not found
 
 Now, stack these two `pre_join_*` tibbles on top of each other. After
 you have verified the stacking worked, assign the resulting object to

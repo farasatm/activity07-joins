@@ -196,13 +196,30 @@ dennys %>%
 Determine if La Quinta has any locations that are outside of the US.
 
 
-
+```{r}
+laquinta %>% 
+  mutate(
+    country = case_when(state %in% states$abbreviation ~ "United States",
+                        TRUE ~ "Other")
+    ) %>% 
+  filter(country == "Other")
+```
 
 #### Isolating US locations
 
 For the rest of this activity, we will work with the data from the United States *only*.
 All Denny's locations in our file are in the US so we do not need to worry about updating this object, but you do need to do some work on the `laquinta` data.
 Create a new object called `laquinta_us` that only contains the locations inside the US.
+
+
+```{r}
+laquinta_us <- laquinta %>% 
+  mutate(
+    country = case_when(state %in% states$abbreviation ~ "United States",
+                        TRUE ~ "Other")
+    ) %>% 
+  filter(country != "Other")
+```
 
 
 
@@ -212,23 +229,36 @@ Let's test some of our data summary skills.
 
 Which US state(s) has/ve the fewest Denny's location?
 
+```{r}
+dennystotal<-dennys %>% 
+  group_by(state) %>% 
+  summarise(n=n())%>% 
+  arrange(n)
+dennystotal
+```
 
 
 
-**Response**:
+**Deleware has the lowest number of Denny's. **:
 
 
 Which US state(s) has/ve the fewest La Quinta locations?
 
 
+```{r}
+laquinta_us_total<-laquinta_us %>% 
+  group_by(state) %>% 
+  summarise(n=n())%>% 
+  arrange(n)
+laquinta_us_total
+```
 
-
-**Response**:
+**Maine has the lowest. **:
 
 
 Is this surprising to you? Why or why not?
 
-**Response**:
+**This is a little strange because you would assume states with the fewest would be the same**:
 
 
 ### Locations per thousand square miles
